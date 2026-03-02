@@ -6,13 +6,14 @@ function toggleTheme(){const h=document.documentElement;const n=h.getAttribute('
 function period(){return document.getElementById('period-sel').value;}
 
 async function loadAll(){
+  document.getElementById('kpi-row').innerHTML='<div style="grid-column:1/-1;color:var(--text3);font-size:.8rem;padding:12px">로딩 중…</div>';
   try{
     const p=period();
     const[hashData,blocks,pools,recBlocks]=await Promise.all([
-      fetch(`${API}/v1/mining/hashrate/${p}`).then(r=>r.json()),
-      fetch(`${API}/v1/mining/blocks/sizes-weights/${p}`).then(r=>r.json()),
-      fetch(`${API}/v1/mining/pools/1w`).then(r=>r.json()),
-      fetch(`${API}/v1/blocks`).then(r=>r.json()),
+      fetch(`${API}/v1/mining/hashrate/${p}`,{signal:AbortSignal.timeout(12000)}).then(r=>r.json()),
+      fetch(`${API}/v1/mining/blocks/sizes-weights/${p}`,{signal:AbortSignal.timeout(12000)}).then(r=>r.json()),
+      fetch(`${API}/v1/mining/pools/1w`,{signal:AbortSignal.timeout(10000)}).then(r=>r.json()),
+      fetch(`${API}/v1/blocks`,{signal:AbortSignal.timeout(10000)}).then(r=>r.json()),
     ]);
     renderKPIs(hashData,recBlocks);
     drawLineChart('hash-chart',hashData.hashrates.map(d=>({t:d.timestamp,v:d.avgHashrate/1e18})),'EH/s','#f7931a');
@@ -20,7 +21,10 @@ async function loadAll(){
     if(blocks.sizes) drawLineChart('fee-chart',blocks.sizes.map((d,i)=>({t:d.timestamp||i,v:(d.avgSize||0)/1e6})),'MB','#3fb950');
     renderPools(pools);
     renderBlockStats(recBlocks);
-  }catch(e){console.warn(e);}
+  }catch(e){
+    document.getElementById('kpi-row').innerHTML=`<div style="grid-column:1/-1;color:var(--red);font-size:.8rem;padding:12px">⚠️ 데이터 로드 실패: ${e.message} <button class="btn secondary" onclick="loadAll()" style="margin-left:12px;padding:4px 10px;font-size:.72rem">재시도</button></div>`;
+    console.warn(e);
+  }
 }
 
 function renderKPIs(hash,blocks){
@@ -30,7 +34,12 @@ function renderKPIs(hash,blocks){
   const diffChg=prevDiff.difficulty?(lastDiff.difficulty-prevDiff.difficulty)/prevDiff.difficulty*100:0;
   const block=blocks[0]||{};
   const totalBtc=21000000;
-  const mined=block.height?Math.floor(block.height/210000)*10.5+Math.min(block.height%210000,210000)*(50/(Math.pow(2,Math.floor(block.height/210000)))):0;
+  let mined=0;
+  if(block.height){
+    const halvings=Math.floor(block.height/210000);
+    for(let i=0;i<halvings;i++) mined+=210000*(50/Math.pow(2,i));
+    mined+=Math.min(block.height%210000,210000)*(50/Math.pow(2,halvings));
+  }
   document.getElementById('kpi-row').innerHTML=`
     <div class="kpi-card"><div class="kpi-val">${((last.avgHashrate||0)/1e18).toFixed(1)}</div><div class="kpi-lbl">해시레이트 (EH/s)</div></div>
     <div class="kpi-card"><div class="kpi-val">${((lastDiff.difficulty||0)/1e12).toFixed(2)}T</div><div class="kpi-lbl">채굴 난이도</div><div class="kpi-change ${diffChg>=0?'up':'down'}">${diffChg>=0?'+':''}${diffChg.toFixed(2)}%</div></div>
@@ -54,7 +63,7 @@ function drawLineChart(id,data,unit,color){
   const min=Math.min(...vals);const max=Math.max(...vals);
   const pad={t:14,r:8,b:20,l:44};
   const W2=W-pad.l-pad.r;const H2=H-pad.t-pad.b;
-  const x=i=>pad.l+i*(W2/(data.length-1));
+  const x=i=>data.length<2?pad.l+W2/2:pad.l+i*(W2/(data.length-1));
   const y=v=>pad.t+H2-(v-min)/(max-min||1)*H2;
   // 그리드
   ctx.strokeStyle=isDark?'#21262d':'#eaeef2';ctx.lineWidth=0.5;
@@ -79,9 +88,10 @@ function renderPools(pools){
   const total=pools.blockCount||1;
   el.innerHTML=(pools.pools||[]).slice(0,15).map(p=>{
     const pct=((p.blockCount/total)*100).toFixed(1);
-    const w=((p.blockCount/pools.pools[0].blockCount)*100).toFixed(0);
+    const maxPool=pools.pools[0]?.blockCount||1;
+    const w=((p.blockCount/maxPool)*100).toFixed(0);
     return`<div class="pool-row">
-      <span class="pool-name">${p.name}</span>
+      <span class="pool-name">${String(p.name||'Unknown').replace(/</g,'&lt;')}</span>
       <div class="pool-bar-wrap"><div class="pool-bar" style="width:${w}%"></div></div>
       <span class="pool-pct">${pct}%</span>
     </div>`;
