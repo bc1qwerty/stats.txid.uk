@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="dark">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bitcoin Stats | txid.uk</title>
+<meta name="description" content="비트코인 온체인 데이터 대시보드 — 해시레이트, 채굴 난이도, 블록 통계">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="base.css"><link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header><div class="header-inner">
+  <a href="https://txid.uk" class="logo">₿ <span>txid</span>.uk</a>
+  <nav>
+    <a href="https://txid.uk">탐색기</a>
+    <a href="https://portfolio.txid.uk">Portfolio</a>
+    <a href="https://nodes.txid.uk">Nodes</a>
+    <a href="#" class="active">Stats</a>
+  </nav>
+  <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+    <select id="period-sel" onchange="loadAll()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:6px;padding:4px 8px;font-size:.75rem;font-family:var(--font-ko);outline:none;">
+      <option value="1m">1개월</option>
+      <option value="3m" selected>3개월</option>
+      <option value="6m">6개월</option>
+      <option value="1y">1년</option>
+      <option value="2y">2년</option>
+    </select>
+    <button id="theme-btn" onclick="toggleTheme()">🌙</button>
+  </div>
+</div></header>
+
+<main>
+  <div class="hero" style="padding:36px 20px 20px">
+    <h1>Bitcoin <span class="accent">Stats</span></h1>
+    <p class="hero-sub">비트코인 온체인 핵심 지표 대시보드</p>
+  </div>
+
+  <div class="content">
+    <div id="kpi-row" class="kpi-row"></div>
+
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">해시레이트 (EH/s)</div>
+        <canvas id="hash-chart" height="160"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">채굴 난이도</div>
+        <canvas id="diff-chart" height="160"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">블록 평균 수수료 (BTC)</div>
+        <canvas id="fee-chart" height="160"></canvas>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">블록당 TX 수</div>
+        <canvas id="tx-chart" height="160"></canvas>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="section-title">⛏ 마이닝 풀 점유율 (7일)</div>
+        <div id="pool-list"></div>
+      </div>
+      <div class="card">
+        <div class="section-title">📦 최근 블록 통계</div>
+        <div id="block-stats"></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer><div class="footer-inner"><span>© 2025 txid.uk</span><span>mempool.space API</span></div></footer>
+<script src="app.js"></script>
+</body></html>
