@@ -33,7 +33,7 @@ header { background: var(--bg2); border-bottom: 1px solid var(--border); positio
 .kpi-change{font-size:.65rem;font-family:var(--font);margin-top:3px;}
 .kpi-change.up{color:var(--green);}.kpi-change.down{color:var(--red);}
 .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;}
-.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;}
+.chart-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
 .chart-title{font-size:.72rem;color:var(--text2);font-family:var(--font-ko);margin-bottom:10px;}
 .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
 .pool-row{display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border);}
