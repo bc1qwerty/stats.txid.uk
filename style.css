@@ -26,9 +26,9 @@ header { background: var(--bg2); border-bottom: 1px solid var(--border); positio
 .nav-links a.active { color: var(--accent); background: rgba(247,147,26,.08); }
 .nav-links a.active::after { width: 60%; }
 .content{max-width:var(--max-w);margin:0 auto;padding:0 24px 60px;}
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:24px;}
-.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:16px;}
-.kpi-val{font-family:var(--font);font-size:1.2rem;font-weight:700;color:var(--accent);}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px;}
+.kpi-card{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;}
+.kpi-val{font-family:var(--font);font-size:1.05rem;font-weight:700;color:var(--accent);}
 .kpi-lbl{font-size:.62rem;color:var(--text3);font-family:var(--font-ko);margin-top:4px;text-transform:uppercase;letter-spacing:.04em;}
 .kpi-change{font-size:.65rem;font-family:var(--font);margin-top:3px;}
 .kpi-change.up{color:var(--green);}.kpi-change.down{color:var(--red);}
@@ -46,5 +46,5 @@ header { background: var(--bg2); border-bottom: 1px solid var(--border); positio
 .bs-row:last-child{border-bottom:none;}
 .bs-key{color:var(--text3);font-family:var(--font-ko);}
 .bs-val{font-family:var(--font);color:var(--text1);}
-@media(max-width:680px){.charts-grid,.two-col{grid-template-columns:1fr;}}
+@media(max-width:680px){.charts-grid,.two-col{grid-template-columns:1fr;}.kpi-row{grid-template-columns:repeat(2,1fr);}}
 
