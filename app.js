@@ -71,7 +71,7 @@ function drawLineChart(id,data,unit,color){
   if(!canvas||!data||!data.length)return;
   const ctx=canvas.getContext('2d');
   const W=canvas.offsetWidth||500;const H=120;
-  canvas.width=W*2;canvas.height=H*2;ctx.scale(2,2);
+  canvas.style.height=H+'px';canvas.width=W*2;canvas.height=H*2;ctx.scale(2,2);
   const isDark=document.documentElement.getAttribute('data-theme')!=='light';
   ctx.fillStyle=isDark?'#161b22':'#ffffff';ctx.fillRect(0,0,W,H);
   const vals=data.map(d=>d.v);
