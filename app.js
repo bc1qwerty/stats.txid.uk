@@ -37,7 +37,7 @@ async function loadAll(){
     renderPools(pools);
     renderBlockStats(recBlocks);
   }catch(e){
-    document.getElementById('kpi-row').innerHTML=`<div style="grid-column:1/-1;color:var(--red);font-size:.8rem;padding:12px">⚠️ 데이터 로드 실패: ${e.message} <button class="btn secondary" onclick="loadAll()" style="margin-left:12px;padding:4px 10px;font-size:.72rem">재시도</button></div>`;
+    document.getElementById('kpi-row').innerHTML=`<div style="grid-column:1/-1;color:var(--red);font-size:.8rem;padding:12px">데이터 로드 실패: ${e.message} <button class="btn secondary" onclick="loadAll()" style="margin-left:12px;padding:4px 10px;font-size:.72rem">재시도</button></div>`;
     console.warn(e);
   }
 }
