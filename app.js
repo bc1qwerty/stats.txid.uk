@@ -73,10 +73,10 @@ function drawLineChart(id,data,unit,color){
   const W=canvas.offsetWidth||500;const H=120;
   canvas.style.height=H+'px';canvas.width=W*2;canvas.height=H*2;ctx.scale(2,2);
   const isDark=document.documentElement.getAttribute('data-theme')!=='light';
-  ctx.fillStyle=isDark?'#161b22':'#ffffff';ctx.fillRect(0,0,W,H);
+  ctx.fillStyle=isDark?'#161b22':'#f6f8fa';ctx.fillRect(0,0,W,H);
   const vals=data.map(d=>d.v);
   const min=Math.min(...vals);const max=Math.max(...vals);
-  const pad={t:14,r:8,b:20,l:44};
+  const pad={t:10,r:16,b:22,l:48};
   const W2=W-pad.l-pad.r;const H2=H-pad.t-pad.b;
   const x=i=>data.length<2?pad.l+W2/2:pad.l+i*(W2/(data.length-1));
   const y=v=>pad.t+H2-(v-min)/(max-min||1)*H2;
