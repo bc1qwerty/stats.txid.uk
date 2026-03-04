@@ -63,6 +63,7 @@ async function loadAll(){
     drawLineChart('hash-chart',hashData.hashrates.map(d=>({t:d.timestamp,v:d.avgHashrate/1e18})),'EH/s','#f7931a');
     drawLineChart('diff-chart',hashData.difficulty.map(d=>({t:d.timestamp,v:d.difficulty/1e12})),'T','#58a6ff');
     if(blocks.sizes) drawLineChart('fee-chart',blocks.sizes.map((d,i)=>({t:d.timestamp||i,v:(d.avgSize||0)/1e6})),'MB','#3fb950');
+    if(Array.isArray(recBlocks)&&recBlocks.length) drawLineChart('tx-chart',[...recBlocks].reverse().map(b=>({t:b.timestamp,v:b.tx_count||0})),'TX','#bc8cff');
     renderPools(pools);
     renderBlockStats(recBlocks);
   }catch(e){
