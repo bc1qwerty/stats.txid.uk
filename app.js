@@ -30,7 +30,7 @@ document.addEventListener('click',e=>{const m=document.getElementById('lang-menu
 
 const API='https://mempool.space/api';
 (function(){
-  const t=localStorage.getItem('theme')||(matchMedia('(prefers-color-scheme:light)').matches?'light':'dark');
+  const t=localStorage.getItem('theme')||'dark';
   document.documentElement.setAttribute('data-theme',t);
   updateThemeBtn();
 })();
