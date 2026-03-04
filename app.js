@@ -1,8 +1,7 @@
 
 function setPeriod(p){
   document.querySelectorAll('.period-btn').forEach(b=>{
-    const bv=b.getAttribute('onclick').match(/'(\w+)'/)?.[1];
-    b.classList.toggle('active', bv===p);
+    b.classList.toggle('active', b.dataset.val===p);
   });
   loadAll();
 }
@@ -48,7 +47,7 @@ function toggleTheme(){
   updateThemeBtn();
 }
 
-function period(){const a=document.querySelector('.period-btn.active');if(!a)return '3m';const m=a.getAttribute('onclick').match(/'([^']+)'/);return m?m[1]:'3m';}
+function period(){const a=document.querySelector('.period-btn.active');return a?a.dataset.val||'3m':'3m';}
 
 async function loadAll(){
   document.getElementById('kpi-row').innerHTML='<div style="grid-column:1/-1;color:var(--text3);font-size:.8rem;padding:12px">로딩 중…</div>';
