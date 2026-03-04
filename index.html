@@ -45,14 +45,7 @@
 </div>
       </div>
     <div class="nav-right">
-      <select id="period-sel" onchange="loadAll()" style="background:var(--bg3);border:1px solid var(--border);color:var(--text2);border-radius:6px;padding:4px 8px;font-size:.75rem;font-family:var(--font-ko);outline:none;">
-        <option value="1m">1개월</option>
-        <option value="3m" selected>3개월</option>
-        <option value="6m">6개월</option>
-        <option value="1y">1년</option>
-        <option value="2y">2년</option>
-      </select>
-      <div class="lang-dropdown">
+<div class="lang-dropdown">
         <button class="lang-btn" id="lang-btn" onclick="toggleLang()" title="언어 변경">KO</button>
         <div class="lang-menu" id="lang-menu">
           <button onclick="setLang('ko')">한국어</button>
@@ -72,6 +65,13 @@
   </div>
 
   <div class="content">
+    <div class="period-bar">
+      <button class="period-btn" onclick="setPeriod('1m')" data-ko="1개월" data-en="1M" data-ja="1ヶ月">1개월</button>
+      <button class="period-btn active" onclick="setPeriod('3m')" data-ko="3개월" data-en="3M" data-ja="3ヶ月">3개월</button>
+      <button class="period-btn" onclick="setPeriod('6m')" data-ko="6개월" data-en="6M" data-ja="6ヶ月">6개월</button>
+      <button class="period-btn" onclick="setPeriod('1y')" data-ko="1년" data-en="1Y" data-ja="1年">1년</button>
+      <button class="period-btn" onclick="setPeriod('2y')" data-ko="2년" data-en="2Y" data-ja="2年">2년</button>
+    </div>
     <div id="kpi-row" class="kpi-row"></div>
 
     <div class="charts-grid">
