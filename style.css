@@ -57,7 +57,7 @@ header { background: var(--bg2); border-bottom: 1px solid var(--border); positio
 .skip-link{position:absolute;top:-40px;left:0;background:var(--accent);color:#fff;padding:8px 16px;z-index:1000;font-size:.8rem;font-family:var(--font-ko);transition:top .2s;text-decoration:none;border-radius:0 0 4px 0}
 .skip-link:focus{top:0}
 .logo-icon{flex-shrink:0;margin-right:6px}
-.icon-shrink{flex-shrink:0}
+.icon-noshrink{flex-shrink:0}
 .auth-mount{position:relative;display:inline-flex}
 .hero-pad{padding:36px 20px 20px}
 .icon-inline{display:inline;vertical-align:middle}
