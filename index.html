@@ -69,7 +69,7 @@
 <main id="main">
   <div class="hero hero-pad">
     <h1>Bitcoin <span class="accent">Stats</span></h1>
-    <p class="hero-sub">비트코인 온체인 핵심 지표 대시보드</p>
+    <p class="hero-sub" data-ko="비트코인 온체인 핵심 지표 대시보드" data-en="Bitcoin on-chain key metrics dashboard" data-ja="ビットコイン オンチェーン指標ダッシュボード">비트코인 온체인 핵심 지표 대시보드</p>
   </div>
 
   <div class="content">
@@ -84,30 +84,30 @@
 
     <div class="charts-grid">
       <div class="chart-card">
-        <div class="chart-title">해시레이트 (EH/s)</div>
+        <div class="chart-title" data-ko="해시레이트 (EH/s)" data-en="Hashrate (EH/s)" data-ja="ハッシュレート (EH/s)">해시레이트 (EH/s)</div>
         <canvas id="hash-chart" height="120" role="img" aria-label="해시레이트 추이 차트"></canvas>
       </div>
       <div class="chart-card">
-        <div class="chart-title">채굴 난이도</div>
+        <div class="chart-title" data-ko="채굴 난이도" data-en="Mining Difficulty" data-ja="採掘難易度">채굴 난이도</div>
         <canvas id="diff-chart" height="120" role="img" aria-label="채굴 난이도 추이 차트"></canvas>
       </div>
       <div class="chart-card">
-        <div class="chart-title">블록 평균 수수료 (BTC)</div>
+        <div class="chart-title" data-ko="블록 평균 수수료 (BTC)" data-en="Avg Block Fee (BTC)" data-ja="ブロック平均手数料 (BTC)">블록 평균 수수료 (BTC)</div>
         <canvas id="fee-chart" height="120" role="img" aria-label="블록 수수료 추이 차트"></canvas>
       </div>
       <div class="chart-card">
-        <div class="chart-title">블록당 TX 수</div>
+        <div class="chart-title" data-ko="블록당 TX 수" data-en="TX per Block" data-ja="ブロック当たりTX数">블록당 TX 수</div>
         <canvas id="tx-chart" height="120" role="img" aria-label="블록당 트랜잭션 수 차트"></canvas>
       </div>
     </div>
 
     <div class="two-col">
       <div class="card">
-        <div class="section-title"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline"><path d="M15 4l5 5-11 11H4v-5L15 4z"/><line x1="9" y1="9" x2="15" y2="15"/></svg> 마이닝 풀 점유율 (7일)</div>
+        <div class="section-title"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline"><path d="M15 4l5 5-11 11H4v-5L15 4z"/><line x1="9" y1="9" x2="15" y2="15"/></svg> <span data-ko="마이닝 풀 점유율 (7일)" data-en="Mining Pool Share (7d)" data-ja="マイニングプール占有率 (7日)">마이닝 풀 점유율 (7일)</span></div>
         <div id="pool-list"></div>
       </div>
       <div class="card">
-        <div class="section-title"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> 최근 블록 통계</div>
+        <div class="section-title"><svg width="13" height="13" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-inline"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg> <span data-ko="최근 블록 통계" data-en="Recent Block Stats" data-ja="最近のブロック統計">최근 블록 통계</span></div>
         <div id="block-stats"></div>
       </div>
     </div>
