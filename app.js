@@ -5,6 +5,7 @@ function setPeriod(p){
   });
   loadAll();
 }
+async function fetchRetry(url,timeout,retries){for(let i=0,m=retries||2;i<=m;i++){try{return await fetch(url,{signal:AbortSignal.timeout(timeout||10000)});}catch(e){if(i>=m)throw e;await new Promise(r=>setTimeout(r,1000<<i));}}}
 'use strict';
 
 // ── 언어 ──
@@ -24,8 +25,8 @@ function setLang(l){
     if(val) el.textContent=val;
   });
 }
-function toggleLang(){document.getElementById('lang-menu')?.classList.toggle('open');}
-document.addEventListener('click',e=>{const m=document.getElementById('lang-menu');if(m&&!e.target.closest('.lang-dropdown'))m.classList.remove('open');});
+function toggleLang(){const m=document.getElementById('lang-menu');m?.classList.toggle('open');document.getElementById('lang-btn')?.setAttribute('aria-expanded',m?.classList.contains('open')||false);}
+document.addEventListener('click',e=>{const m=document.getElementById('lang-menu');if(m&&!e.target.closest('.lang-dropdown')){m.classList.remove('open');document.getElementById('lang-btn')?.setAttribute('aria-expanded','false');}});
 (function(){setLang(lang);})();
 
 const API='https://mempool.space/api';
@@ -54,10 +55,10 @@ async function loadAll(){
   try{
     const p=period();
     const[hashData,blocks,pools,recBlocks]=await Promise.all([
-      fetch(`${API}/v1/mining/hashrate/${p}`,{signal:AbortSignal.timeout(12000)}).then(r=>r.json()),
-      fetch(`${API}/v1/mining/blocks/sizes-weights/${p}`,{signal:AbortSignal.timeout(12000)}).then(r=>r.json()),
-      fetch(`${API}/v1/mining/pools/1w`,{signal:AbortSignal.timeout(10000)}).then(r=>r.json()),
-      fetch(`${API}/v1/blocks`,{signal:AbortSignal.timeout(10000)}).then(r=>r.json()),
+      fetchRetry(`${API}/v1/mining/hashrate/${p}`,12000).then(r=>r.json()),
+      fetchRetry(`${API}/v1/mining/blocks/sizes-weights/${p}`,12000).then(r=>r.json()),
+      fetchRetry(`${API}/v1/mining/pools/1w`,10000).then(r=>r.json()),
+      fetchRetry(`${API}/v1/blocks`,10000).then(r=>r.json()),
     ]);
     renderKPIs(hashData,recBlocks);
     drawLineChart('hash-chart',hashData.hashrates.map(d=>({t:d.timestamp,v:d.avgHashrate/1e18})),'EH/s','#f7931a');
@@ -67,7 +68,7 @@ async function loadAll(){
     renderPools(pools);
     renderBlockStats(recBlocks);
   }catch(e){
-    document.getElementById('kpi-row').innerHTML=`<div style="grid-column:1/-1;color:var(--red);font-size:.8rem;padding:12px">데이터 로드 실패: ${String(e.message).replace(/</g,'&lt;')} <button class="btn secondary" onclick="loadAll()" style="margin-left:12px;padding:4px 10px;font-size:.72rem">재시도</button></div>`;
+    document.getElementById('kpi-row').innerHTML=`<div style="grid-column:1/-1;color:var(--red);font-size:.8rem;padding:12px">데이터를 불러올 수 없습니다. <button class="btn secondary" onclick="loadAll()" style="margin-left:12px;padding:4px 10px;font-size:.72rem">재시도</button></div>`;
     console.warn(e);
   }
 }
