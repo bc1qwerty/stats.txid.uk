@@ -29,17 +29,41 @@ function toggleLang(){const m=document.getElementById('lang-menu');m?.classList.
 document.addEventListener('click',e=>{const m=document.getElementById('lang-menu');if(m&&!e.target.closest('.lang-dropdown')){m.classList.remove('open');document.getElementById('lang-btn')?.setAttribute('aria-expanded','false');}});
 (function(){setLang(lang);})();
 
+const T = {
+  loading: { ko:'로딩 중…', en:'Loading...', ja:'読み込み中…' },
+  dataLoadFailed: { ko:'데이터를 불러올 수 없습니다.', en:'Failed to load data.', ja:'データを読み込めませんでした。' },
+  retry: { ko:'재시도', en:'Retry', ja:'再試行' },
+  hashrate: { ko:'해시레이트 (EH/s)', en:'Hashrate (EH/s)', ja:'ハッシュレート (EH/s)' },
+  miningDifficulty: { ko:'채굴 난이도', en:'Mining Difficulty', ja:'採掘難易度' },
+  currentBlockHeight: { ko:'현재 블록높이', en:'Current Block Height', ja:'現在のブロック高' },
+  recentBlockFee: { ko:'최근 블록 수수료(BTC)', en:'Recent Block Fee (BTC)', ja:'最新ブロック手数料(BTC)' },
+  recentBlockTx: { ko:'최근 블록 TX 수', en:'Recent Block TX Count', ja:'最新ブロックTX数' },
+  minedBtc: { ko:'채굴된 BTC', en:'Mined BTC', ja:'採掘済みBTC' },
+  remainingBtc: { ko:'남은 BTC', en:'Remaining BTC', ja:'残りBTC' },
+  remainingUnit: { ko:'만', en:'K', ja:'万' },
+  avgBlockSize: { ko:'평균 블록 크기', en:'Avg Block Size', ja:'平均ブロックサイズ' },
+  avgTxCount: { ko:'평균 TX 수', en:'Avg TX Count', ja:'平均TX数' },
+  avgTotalFee: { ko:'평균 총 수수료', en:'Avg Total Fee', ja:'平均総手数料' },
+  maxTxCount: { ko:'최대 TX 수', en:'Max TX Count', ja:'最大TX数' },
+  minTxCount: { ko:'최소 TX 수', en:'Min TX Count', ja:'最小TX数' },
+  dataReference: { ko:'데이터 기준', en:'Data Reference', ja:'データ基準' },
+  recentNBlocks: { ko:'최근 ${n}블록', en:'Recent ${n} blocks', ja:'最新${n}ブロック' },
+  lightMode: { ko:'라이트 모드로 전환', en:'Switch to light mode', ja:'ライトモードに切替' },
+  darkMode: { ko:'다크 모드로 전환', en:'Switch to dark mode', ja:'ダークモードに切替' },
+};
+function t(key, params){ let s = (T[key]&&T[key][lang]) || (T[key]&&T[key].en) || key; if(params){Object.keys(params).forEach(k=>{s=s.replace('${'+k+'}',params[k]);});} return s; }
+
 const API='https://mempool.space/api';
 (function(){
-  const t=localStorage.getItem('theme')||'dark';
-  document.documentElement.setAttribute('data-theme',t);
+  const th=localStorage.getItem('theme')||'dark';
+  document.documentElement.setAttribute('data-theme',th);
   updateThemeBtn();
 })();
 function updateThemeBtn(){
   const btn=document.getElementById('theme-btn');if(!btn)return;
   const isDark=document.documentElement.getAttribute('data-theme')!=='light';
   btn.innerHTML=isDark?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/></svg>':'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-  btn.title=isDark?'라이트 모드로 전환':'다크 모드로 전환';
+  btn.title=isDark?t('lightMode'):t('darkMode');
 }
 function toggleTheme(){
   const h=document.documentElement;
@@ -51,7 +75,7 @@ function toggleTheme(){
 function period(){const a=document.querySelector('.period-btn.active');return a?a.dataset.val||'3m':'3m';}
 
 async function loadAll(){
-  document.getElementById('kpi-row').innerHTML='<div style="grid-column:1/-1;color:var(--text3);font-size:.8rem;padding:12px">로딩 중…</div>';
+  document.getElementById('kpi-row').innerHTML='<div class="kpi-loading">'+t('loading')+'</div>';
   try{
     const p=period();
     const[hashData,blocks,pools,recBlocks]=await Promise.all([
@@ -68,7 +92,8 @@ async function loadAll(){
     renderPools(pools);
     renderBlockStats(recBlocks);
   }catch(e){
-    document.getElementById('kpi-row').innerHTML=`<div style="grid-column:1/-1;color:var(--red);font-size:.8rem;padding:12px">데이터를 불러올 수 없습니다. <button class="btn secondary" onclick="loadAll()" style="margin-left:12px;padding:4px 10px;font-size:.72rem">재시도</button></div>`;
+    document.getElementById('kpi-row').innerHTML=`<div class="kpi-error">${t('dataLoadFailed')} <button class="btn secondary retry-inline" id="retry-btn">${t('retry')}</button></div>`;
+    document.getElementById('retry-btn')?.addEventListener('click', loadAll);
     console.warn(e);
   }
 }
@@ -87,13 +112,13 @@ function renderKPIs(hash,blocks){
     mined+=Math.min(block.height%210000,210000)*(50/Math.pow(2,halvings));
   }
   document.getElementById('kpi-row').innerHTML=`
-    <div class="kpi-card"><div class="kpi-val">${((last.avgHashrate||0)/1e18).toFixed(1)}</div><div class="kpi-lbl">해시레이트 (EH/s)</div></div>
-    <div class="kpi-card"><div class="kpi-val">${((lastDiff.difficulty||0)/1e12).toFixed(2)}T</div><div class="kpi-lbl">채굴 난이도</div><div class="kpi-change ${diffChg>=0?'up':'down'}">${diffChg>=0?'+':''}${diffChg.toFixed(2)}%</div></div>
-    <div class="kpi-card"><div class="kpi-val">${(block.height||0).toLocaleString()}</div><div class="kpi-lbl">현재 블록높이</div></div>
-    <div class="kpi-card"><div class="kpi-val">${((block.extras?.totalFees||0)/1e8).toFixed(4)}</div><div class="kpi-lbl">최근 블록 수수료(BTC)</div></div>
-    <div class="kpi-card"><div class="kpi-val">${(block.tx_count||0).toLocaleString()}</div><div class="kpi-lbl">최근 블록 TX 수</div></div>
-    <div class="kpi-card"><div class="kpi-val">${(mined/1e6).toFixed(3)}M</div><div class="kpi-lbl">채굴된 BTC</div></div>
-    <div class="kpi-card"><div class="kpi-val">${((totalBtc-mined)/1e4).toFixed(0)}만</div><div class="kpi-lbl">남은 BTC</div></div>
+    <div class="kpi-card"><div class="kpi-val">${((last.avgHashrate||0)/1e18).toFixed(1)}</div><div class="kpi-lbl">${t('hashrate')}</div></div>
+    <div class="kpi-card"><div class="kpi-val">${((lastDiff.difficulty||0)/1e12).toFixed(2)}T</div><div class="kpi-lbl">${t('miningDifficulty')}</div><div class="kpi-change ${diffChg>=0?'up':'down'}">${diffChg>=0?'+':''}${diffChg.toFixed(2)}%</div></div>
+    <div class="kpi-card"><div class="kpi-val">${(block.height||0).toLocaleString()}</div><div class="kpi-lbl">${t('currentBlockHeight')}</div></div>
+    <div class="kpi-card"><div class="kpi-val">${((block.extras?.totalFees||0)/1e8).toFixed(4)}</div><div class="kpi-lbl">${t('recentBlockFee')}</div></div>
+    <div class="kpi-card"><div class="kpi-val">${(block.tx_count||0).toLocaleString()}</div><div class="kpi-lbl">${t('recentBlockTx')}</div></div>
+    <div class="kpi-card"><div class="kpi-val">${(mined/1e6).toFixed(3)}M</div><div class="kpi-lbl">${t('minedBtc')}</div></div>
+    <div class="kpi-card"><div class="kpi-val">${((totalBtc-mined)/1e4).toFixed(0)}${t('remainingUnit')}</div><div class="kpi-lbl">${t('remainingBtc')}</div></div>
   `;
 }
 
@@ -101,8 +126,8 @@ function drawLineChart(id,data,unit,color){
   const canvas=document.getElementById(id);
   if(!canvas||!data||!data.length)return;
   const ctx=canvas.getContext('2d');
-  const W=canvas.offsetWidth||500;const H=120;
-  canvas.style.height=H+'px';canvas.width=W*2;canvas.height=H*2;ctx.scale(2,2);
+  const W=canvas.offsetWidth||500;const H=Math.max(80,Math.min(120,W*0.2));
+  canvas.classList.add('canvas-h');canvas.width=W*2;canvas.height=H*2;ctx.scale(2,2);
   const isDark=document.documentElement.getAttribute('data-theme')!=='light';
   ctx.fillStyle=isDark?'#161b22':'#f6f8fa';ctx.fillRect(0,0,W,H);
   const vals=data.map(d=>d.v);
@@ -138,7 +163,7 @@ function renderPools(pools){
     const w=((p.blockCount/maxPool)*100).toFixed(0);
     return`<div class="pool-row">
       <span class="pool-name">${String(p.name||'Unknown').replace(/</g,'&lt;')}</span>
-      <div class="pool-bar-wrap"><div class="pool-bar" style="width:${w}%"></div></div>
+      <div class="pool-bar-wrap"><div class="pool-bar" style="--w:${w}%"></div></div>
       <span class="pool-pct">${pct}%</span>
     </div>`;
   }).join('');
@@ -149,13 +174,29 @@ function renderBlockStats(blocks){
   const avg=arr=>arr.reduce((s,v)=>s+v,0)/arr.length;
   const sizes=blocks.map(b=>b.size);const fees=blocks.map(b=>b.extras?.totalFees||0);const txs=blocks.map(b=>b.tx_count);
   el.innerHTML=`
-    <div class="bs-row"><span class="bs-key">평균 블록 크기</span><span class="bs-val">${(avg(sizes)/1024).toFixed(0)} KB</span></div>
-    <div class="bs-row"><span class="bs-key">평균 TX 수</span><span class="bs-val">${avg(txs).toFixed(0)}</span></div>
-    <div class="bs-row"><span class="bs-key">평균 총 수수료</span><span class="bs-val">${(avg(fees)/1e8).toFixed(4)} BTC</span></div>
-    <div class="bs-row"><span class="bs-key">최대 TX 수</span><span class="bs-val">${Math.max(...txs).toLocaleString()}</span></div>
-    <div class="bs-row"><span class="bs-key">최소 TX 수</span><span class="bs-val">${Math.min(...txs).toLocaleString()}</span></div>
-    <div class="bs-row"><span class="bs-key">데이터 기준</span><span class="bs-val">최근 ${blocks.length}블록</span></div>
+    <div class="bs-row"><span class="bs-key">${t('avgBlockSize')}</span><span class="bs-val">${(avg(sizes)/1024).toFixed(0)} KB</span></div>
+    <div class="bs-row"><span class="bs-key">${t('avgTxCount')}</span><span class="bs-val">${avg(txs).toFixed(0)}</span></div>
+    <div class="bs-row"><span class="bs-key">${t('avgTotalFee')}</span><span class="bs-val">${(avg(fees)/1e8).toFixed(4)} BTC</span></div>
+    <div class="bs-row"><span class="bs-key">${t('maxTxCount')}</span><span class="bs-val">${Math.max(...txs).toLocaleString()}</span></div>
+    <div class="bs-row"><span class="bs-key">${t('minTxCount')}</span><span class="bs-val">${Math.min(...txs).toLocaleString()}</span></div>
+    <div class="bs-row"><span class="bs-key">${t('dataReference')}</span><span class="bs-val">${t('recentNBlocks',{n:blocks.length})}</span></div>
   `;
 }
 
 loadAll();
+
+// ── 이벤트 리스너 (인라인 onclick 대체) ──
+document.getElementById('lang-btn')?.addEventListener('click', toggleLang);
+document.querySelectorAll('#lang-menu button').forEach(function(btn) {
+  var lang = btn.textContent === '한국어' ? 'ko' : btn.textContent === 'English' ? 'en' : 'ja';
+  btn.addEventListener('click', function() { setLang(lang); });
+});
+document.getElementById('theme-btn')?.addEventListener('click', toggleTheme);
+
+// Period buttons
+document.querySelectorAll('.period-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var period = this.dataset.period || this.textContent.trim().toLowerCase();
+    setPeriod(period);
+  });
+});
